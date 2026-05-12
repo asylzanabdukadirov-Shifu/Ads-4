@@ -1,0 +1,223 @@
+public class Main {
+
+    public static void main(String[] args) {
+
+        Experiment experiment = new Experiment();
+
+        experiment.runMultipleTests();
+
+        experiment.printResults();
+    }
+}
+public class Vertex {
+
+    private int id;
+
+    public Vertex(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(id);
+    }
+}
+public class Edge {
+
+    private Vertex source;
+    private Vertex destination;
+
+    public Edge(Vertex source, Vertex destination) {
+        this.source = source;
+        this.destination = destination;
+    }
+
+    public Vertex getSource() {
+        return source;
+    }
+
+    public Vertex getDestination() {
+        return destination;
+    }
+
+    @Override
+    public String toString() {
+        return source + " -> " + destination;
+    }
+}
+
+import java.util.*;
+
+public class Graph {
+
+    private Map<Integer, List<Integer>> adjList;
+
+    public Graph() {
+        adjList = new HashMap<>();
+    }
+
+    // Добавление вершины
+    public void addVertex(Vertex v) {
+        adjList.putIfAbsent(v.getId(), new ArrayList<>());
+    }
+
+    // Добавление ребра
+    public void addEdge(int from, int to) {
+
+        if (!adjList.containsKey(from)) {
+            adjList.put(from, new ArrayList<>());
+        }
+
+        if (!adjList.containsKey(to)) {
+            adjList.put(to, new ArrayList<>());
+        }
+
+        // Неориентированный граф
+        adjList.get(from).add(to);
+        adjList.get(to).add(from);
+    }
+
+    // Вывод графа
+    public void printGraph() {
+
+        System.out.println("Graph Structure:");
+
+        for (int vertex : adjList.keySet()) {
+            System.out.println(vertex + " -> " + adjList.get(vertex));
+        }
+    }
+
+    // BFS traversal
+    public void bfs(int start) {
+
+        Set<Integer> visited = new HashSet<>();
+        Queue<Integer> queue = new LinkedList<>();
+
+        visited.add(start);
+        queue.add(start);
+
+        while (!queue.isEmpty()) {
+
+            int current = queue.poll();
+
+            System.out.print(current + " ");
+
+            for (int neighbor : adjList.get(current)) {
+
+                if (!visited.contains(neighbor)) {
+
+                    visited.add(neighbor);
+                    queue.add(neighbor);
+                }
+            }
+        }
+
+        System.out.println();
+    }
+
+    // DFS traversal
+public void dfs(int start) {
+
+        Set<Integer> visited = new HashSet<>();
+
+        dfsHelper(start, visited);
+
+        System.out.println();
+    }
+
+    private void dfsHelper(int current, Set<Integer> visited) {
+
+        visited.add(current);
+
+        System.out.print(current + " ");
+
+        for (int neighbor : adjList.get(current)) {
+
+            if (!visited.contains(neighbor)) {
+                dfsHelper(neighbor, visited);
+            }
+        }
+    }
+    
+}
+
+public class Experiment {
+
+    public void runTraversals(Graph g) {
+
+        System.out.println("\nBFS Traversal:");
+
+        long startBFS = System.nanoTime();
+
+        g.bfs(1);
+
+        long endBFS = System.nanoTime();
+
+        System.out.println("\nDFS Traversal:");
+
+        long startDFS = System.nanoTime();
+
+        g.dfs(1);
+
+        long endDFS = System.nanoTime();
+
+        System.out.println("\nBFS Time: " + (endBFS - startBFS) + " ns");
+        System.out.println("DFS Time: " + (endDFS - startDFS) + " ns");
+    }
+
+    public Graph createGraph(int size) {
+
+        Graph g = new Graph();
+
+        // Создание вершин
+        for (int i = 1; i <= size; i++) {
+            g.addVertex(new Vertex(i));
+        }
+
+        // Добавление связей
+        for (int i = 1; i < size; i++) {
+            g.addEdge(i, i + 1);
+        }
+
+        // Дополнительные связи
+        for (int i = 1; i <= size / 2; i++) {
+
+            int to = i + 2;
+
+            if (to <= size) {
+                g.addEdge(i, to);
+            }
+        }
+
+        return g;
+    }
+
+    public void runMultipleTests() {
+
+        int[] sizes = {10, 30, 100};
+
+        for (int size : sizes) {
+
+            System.out.println("\n==============================");
+            System.out.println("GRAPH SIZE: " + size);
+            System.out.println("==============================");
+
+            Graph g = createGraph(size);
+
+            if (size == 10) {
+                g.printGraph();
+            }
+
+            runTraversals(g);
+        }
+    }
+
+    public void printResults() {
+
+        System.out.println("\nExperiment completed successfully.");
+    }
+}
