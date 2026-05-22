@@ -63,16 +63,6 @@ The implementation does not use a priority queue, following the bonus task requi
 * Queue
 * Set
 
----
-
-## Author
-
-Student project for graph traversal and shortest path algorithm implementation.
-
-
-
-
-
 
 
 
