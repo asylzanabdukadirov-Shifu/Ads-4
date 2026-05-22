@@ -1,3 +1,82 @@
+
+# Graph Traversal and Dijkstra Algorithm
+
+## Overview
+
+This project demonstrates the implementation of several graph algorithms in Java using an adjacency list representation.
+
+The project includes:
+
+* Breadth-First Search (BFS)
+* Depth-First Search (DFS)
+* Dijkstra’s Shortest Path Algorithm
+
+The program also compares traversal execution times on graphs of different sizes.
+
+---
+
+## Graph Structure
+
+The graph is implemented using:
+
+* `HashMap`
+* `ArrayList`
+* Weighted edges
+* Adjacency List representation
+
+Each vertex is connected through edges that can store weights for shortest path calculations.
+
+---
+
+## Bonus Task Implementation
+
+For the bonus task, the graph was upgraded to support weighted edges and shortest path calculations.
+
+### Changes Made
+
+* Added a `weight` field to the `Edge` class
+* Modified the adjacency list to store `Edge` objects instead of integers
+* Updated graph connections to support edge weights
+* Implemented Dijkstra’s Algorithm using arrays, loops, and collections
+* Added shortest path output from a selected starting vertex
+
+---
+
+## Dijkstra Algorithm
+
+The `dijkstra(int start)` method:
+
+* Takes a starting vertex
+* Calculates the shortest distance to all other vertices
+* Displays the results in the console
+
+The implementation does not use a priority queue, following the bonus task requirements.
+
+---
+
+
+## Technologies Used
+
+* Java
+* HashMap
+* ArrayList
+* Queue
+* Set
+
+---
+
+## Author
+
+Student project for graph traversal and shortest path algorithm implementation.
+
+
+
+
+
+
+
+
+
 # Assignment 4: Graph Traversal and Representation System
 
 ## Project Overview
