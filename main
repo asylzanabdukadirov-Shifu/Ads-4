@@ -1,3 +1,5 @@
+import java.util.*;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -9,7 +11,11 @@ public class Main {
         experiment.printResults();
     }
 }
-public class Vertex {
+
+// =========================
+// Vertex
+// =========================
+class Vertex {
 
     private int id;
 
@@ -26,35 +32,27 @@ public class Vertex {
         return String.valueOf(id);
     }
 }
-public class Edge {
 
-    private Vertex source;
-    private Vertex destination;
+// =========================
+// Edge
+// =========================
+class Edge {
 
-    public Edge(Vertex source, Vertex destination) {
-        this.source = source;
+    int destination;
+    int weight;
+
+    public Edge(int destination, int weight) {
         this.destination = destination;
-    }
-
-    public Vertex getSource() {
-        return source;
-    }
-
-    public Vertex getDestination() {
-        return destination;
-    }
-
-    @Override
-    public String toString() {
-        return source + " -> " + destination;
+        this.weight = weight;
     }
 }
 
-import java.util.*;
+// =========================
+// Graph
+// =========================
+class Graph {
 
-public class Graph {
-
-    private Map<Integer, List<Integer>> adjList;
+    private Map<Integer, List<Edge>> adjList;
 
     public Graph() {
         adjList = new HashMap<>();
@@ -66,7 +64,7 @@ public class Graph {
     }
 
     // Добавление ребра
-    public void addEdge(int from, int to) {
+    public void addEdge(int from, int to, int weight) {
 
         if (!adjList.containsKey(from)) {
             adjList.put(from, new ArrayList<>());
@@ -77,8 +75,8 @@ public class Graph {
         }
 
         // Неориентированный граф
-        adjList.get(from).add(to);
-        adjList.get(to).add(from);
+        adjList.get(from).add(new Edge(to, weight));
+        adjList.get(to).add(new Edge(from, weight));
     }
 
     // Вывод графа
@@ -87,11 +85,22 @@ public class Graph {
         System.out.println("Graph Structure:");
 
         for (int vertex : adjList.keySet()) {
-            System.out.println(vertex + " -> " + adjList.get(vertex));
+
+            System.out.print(vertex + " -> ");
+
+            for (Edge edge : adjList.get(vertex)) {
+
+                System.out.print(
+                        "(" + edge.destination +
+                        ", weight=" + edge.weight + ") "
+                );
+            }
+
+            System.out.println();
         }
     }
 
-    // BFS traversal
+    // BFS
     public void bfs(int start) {
 
         Set<Integer> visited = new HashSet<>();
@@ -106,7 +115,9 @@ public class Graph {
 
             System.out.print(current + " ");
 
-            for (int neighbor : adjList.get(current)) {
+            for (Edge edge : adjList.get(current)) {
+
+                int neighbor = edge.destination;
 
                 if (!visited.contains(neighbor)) {
 
@@ -119,8 +130,8 @@ public class Graph {
         System.out.println();
     }
 
-    // DFS traversal
-public void dfs(int start) {
+    // DFS
+    public void dfs(int start) {
 
         Set<Integer> visited = new HashSet<>();
 
@@ -135,17 +146,82 @@ public void dfs(int start) {
 
         System.out.print(current + " ");
 
-        for (int neighbor : adjList.get(current)) {
+        for (Edge edge : adjList.get(current)) {
+
+            int neighbor = edge.destination;
 
             if (!visited.contains(neighbor)) {
+
                 dfsHelper(neighbor, visited);
             }
         }
     }
-    
+
+    // Dijkstra
+    public void dijkstra(int start) {
+
+        Map<Integer, Integer> distance = new HashMap<>();
+        Set<Integer> visited = new HashSet<>();
+
+        for (int vertex : adjList.keySet()) {
+            distance.put(vertex, Integer.MAX_VALUE);
+        }
+
+        distance.put(start, 0);
+
+        while (visited.size() < adjList.size()) {
+
+            int current = -1;
+            int minDistance = Integer.MAX_VALUE;
+
+            // Поиск вершины с минимальным расстоянием
+            for (int vertex : distance.keySet()) {
+
+                if (!visited.contains(vertex)
+                        && distance.get(vertex) < minDistance) {
+
+                    minDistance = distance.get(vertex);
+                    current = vertex;
+                }
+            }
+
+            if (current == -1)
+                break;
+
+            visited.add(current);
+
+            // Обновление расстояний
+            for (Edge edge : adjList.get(current)) {
+
+                int neighbor = edge.destination;
+
+                int newDistance =
+                        distance.get(current) + edge.weight;
+
+                if (newDistance < distance.get(neighbor)) {
+
+                    distance.put(neighbor, newDistance);
+                }
+            }
+        }
+
+        System.out.println("\nDijkstra shortest paths:");
+
+        for (int vertex : distance.keySet()) {
+
+            System.out.println(
+                    "From " + start +
+                    " to " + vertex +
+                    " = " + distance.get(vertex)
+            );
+        }
+    }
 }
 
-public class Experiment {
+// =========================
+// Experiment
+// =========================
+class Experiment {
 
     public void runTraversals(Graph g) {
 
@@ -165,6 +241,10 @@ public class Experiment {
 
         long endDFS = System.nanoTime();
 
+        System.out.println("\nDijkstra:");
+
+        g.dijkstra(1);
+
         System.out.println("\nBFS Time: " + (endBFS - startBFS) + " ns");
         System.out.println("DFS Time: " + (endDFS - startDFS) + " ns");
     }
@@ -178,9 +258,9 @@ public class Experiment {
             g.addVertex(new Vertex(i));
         }
 
-        // Добавление связей
+        // Основные связи
         for (int i = 1; i < size; i++) {
-            g.addEdge(i, i + 1);
+            g.addEdge(i, i + 1, 1);
         }
 
         // Дополнительные связи
@@ -189,7 +269,7 @@ public class Experiment {
             int to = i + 2;
 
             if (to <= size) {
-                g.addEdge(i, to);
+                g.addEdge(i, to, 2);
             }
         }
 
