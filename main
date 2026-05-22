@@ -157,7 +157,8 @@ class Graph {
         }
     }
 
-    // Dijkstra
+    // Dijkstra 
+    // Dijkstra's Algorithm for shortest paths
     public void dijkstra(int start) {
 
         Map<Integer, Integer> distance = new HashMap<>();
